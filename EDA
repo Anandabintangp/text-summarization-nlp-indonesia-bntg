@@ -31,3 +31,67 @@ def parsing_folder(folder):
 df_train = parsing_folder(train_dir)
 df_validate = parsing_folder(validate_dir)
 df_test = parsing_folder(test_dir)
+
+df_train.head()
+
+df_train.info
+
+df_train.isnull().sum()
+
+df_train.dtypes
+
+df_train["clean_article"].iloc[0]
+
+df_train["clean_summary"].iloc[0]
+
+%pip install wordcloud
+
+from collections import Counter
+from wordcloud import WordCloud
+
+dftrain_sample = df_train.sample(2000, random_state=42)
+flatten_clean_article = sum(sum(dftrain_sample["clean_article"],[]),[])
+flatten_clean_summary = sum(sum(dftrain_sample["clean_summary"],[]),[])
+
+article_freq = Counter(flatten_clean_article)
+article_cloud = WordCloud(width=800, height=400,background_color="white").generate_from_frequencies(article_freq)
+plt.figure(figsize=(10,4))
+plt.imshow(article_cloud, interpolation="bilinear")
+plt.axis("off")
+plt.show()
+
+summary_freq = Counter(flatten_clean_summary)
+summary_cloud = WordCloud(width=800, height=400, background_color="white").generate_from_frequencies(summary_freq)
+plt.figure(figsize=(10,4))
+plt.imshow(summary_cloud, interpolation="bilinear")
+plt.axis("off")
+plt.show()
+
+%pip install Sastrawi
+
+#percobaan hapus Stopwords
+from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
+
+factory = StopWordRemoverFactory()
+stopwords = set(factory.get_stop_words())
+filtered_article = [t.lower() for t in flatten_clean_article if t.isalpha() and t not in stopwords]
+filtered_summary = [t.lower() for t in flatten_clean_summary if t.isalpha() and t not in stopwords]
+
+article_cloud = WordCloud(width=800, height=400,background_color="white").generate(" ".join(filtered_article))
+plt.figure(figsize=(10,4))
+plt.imshow(article_cloud, interpolation="bilinear")
+plt.axis("off")
+plt.show()
+
+summary_cloud = WordCloud(width=800, height=400,background_color="white").generate(" ".join(filtered_summary))
+plt.figure(figsize=(10,4))
+plt.imshow(summary_cloud, interpolation="bilinear")
+plt.axis("off")
+plt.show()
+
+#detokenize clean_article dari raw data
+
+dftrain_sample["detokenized_article"] = dftrain_sample["clean_article"].apply(lambda x: " ".join(sum(x,[])))
+print(dftrain_sample["detokenized_article"].iloc[0])
+
+
