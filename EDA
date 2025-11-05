@@ -1,0 +1,33 @@
+import os
+import json
+
+#deklarasi path
+# train_dir = r"D:\Bootcamp NLP\Materi Bootcamp\Natural Language Processing (NLP)\Project NLP\Text Summarization\Dataset\liputan6_data\canonical\train"
+# validate_dir = r"D:\Bootcamp NLP\Materi Bootcamp\Natural Language Processing (NLP)\Project NLP\Text Summarization\Dataset\liputan6_data\canonical\dev"
+# test_dir = r"D:\Bootcamp NLP\Materi Bootcamp\Natural Language Processing (NLP)\Project NLP\Text Summarization\Dataset\liputan6_data\canonical\test"
+
+#buat direktori daffa (di comment aja nanti kak dede)
+train_dir = r"D:\project-indoai\Project 2\liputan6_data\liputan6_data\canonical\train"
+validate_dir = r"D:\project-indoai\Project 2\liputan6_data\liputan6_data\canonical\dev"
+test_dir = r"D:\project-indoai\Project 2\liputan6_data\liputan6_data\canonical\test"
+
+#buat fungsi untuk sekali parsing masing2 folder JSON ke DataFrame
+def parsing_folder(folder):
+    data = [] #list yg bakal nampung data JSON
+    print(f"Sedang proses folder{folder}")
+
+    #looping proses parsing 
+    for file_name in os.listdir(folder):
+        if file_name.endswith(".json"):
+            file_path = os.path.join(folder, file_name)
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    data.append(json.load(f))
+            except Exception as e:
+                    print(f"Error parsing{file_name} di {folder}: {e}")
+    return pd.DataFrame(data)
+
+
+df_train = parsing_folder(train_dir)
+df_validate = parsing_folder(validate_dir)
+df_test = parsing_folder(test_dir)
