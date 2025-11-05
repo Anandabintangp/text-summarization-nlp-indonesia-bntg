@@ -1,0 +1,15 @@
+df_train["extractive_summary"].value_counts()
+
+from nltk.tokenize import sent_tokenize
+
+def extractive_summary_text(row):
+    sentences = sent_tokenize(row["detokenized_article"])
+    indices = row["extractive_summary"]
+    if not isinstance(indices, list):
+        return ""
+
+    selected = [sentences[i] for i in indices if i < len(sentences)]
+    return " ".join(selected)
+
+dftrain_sample["extractive_text"] = dftrain_sample.apply(extractive_summary_text, axis=1)
+dftrain_sample[["detokenized_article", "extractive_summary", "extractive_text"]].head()
